@@ -68,7 +68,34 @@ GitHub Actions 탭에서 "Deploy newsletter-service to Cloud Run" 워크플로�
 2. 워크플로우 완료 후 Summary에서 배포된 URL 확인
 3. Cloud Run 콘솔에서 서비스 상태 확인
 
-## 로컬 테스트
+## 로컬 개발 환경 설정
+
+### 초기 설정
+
+1. **gradle.properties 파일 생성** (선택사항)
+```bash
+cp gradle.properties.example gradle.properties
+# 필요시 자신의 JDK 경로로 수정
+```
+
+2. **로컬 프로파일로 실행**
+```bash
+# IDE에서 실행: "Newsletter Service (Local)" 구성 선택
+# 또는 터미널에서:
+SPRING_PROFILES_ACTIVE=local ./gradlew bootRun
+```
+
+로컬 환경에서는 H2 데이터베이스(PostgreSQL 호환 모드)를 사용하며, 데이터는 `./data/newsletter.mv.db`에 저장됩니다.
+
+### JDK 21 설정
+
+이 프로젝트는 JDK 21이 필요합니다. IDE가 자동으로 감지하지 못하면:
+
+- **VS Code**: `.vscode/settings.json`이 자동 생성됨
+- **IntelliJ IDEA**: `.idea/misc.xml`이 자동 생성됨
+- **수동 설정**: `gradle.properties`에서 `org.gradle.java.home` 설정
+
+## 로컬 Docker 테스트
 
 배포 전 로컬에서 Docker 이미지를 테스트할 수 있습니다:
 
