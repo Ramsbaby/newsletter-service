@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    # H2 Database (로컬 개발용 - PostgreSQL 호환 모드)
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:./data/newsletter;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password: 
+    hikari:
+      maximum-pool-size: 1
+      minimum-idle: 0
+  
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+  
+  mail:
+    # 로컬에서는 실제로 메일을 보내지 않도록 설정 (선택사항)
+    host: localhost
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+logging:
+  level:
+    "[app.ramsbaby.newsletter]": DEBUG
+    "[org.springframework.jdbc]": DEBUG
+
+app:
+  siteUrl: http://localhost:8080
+  apiBaseUrl: http://localhost:8080
+  rssUrl: https://ramsbaby.netlify.app/rss.xml
+  mail:
+    from: local@localhost
+

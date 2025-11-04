@@ -30,6 +30,7 @@ dependencies {
 
     // Database drivers
     implementation("org.xerial:sqlite-jdbc:3.47.1.0")  // 로컬 테스트용
+    implementation("com.h2database:h2:2.2.224")  // 로컬 개발용 (PostgreSQL 호환)
     implementation("org.postgresql:postgresql:42.7.3")  // 프로덕션용
     implementation("org.flywaydb:flyway-core:9.22.3")
 
