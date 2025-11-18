@@ -39,7 +39,7 @@ public class MessageService {
     public int queueMessagesForCampaign(long campaignId) {
         // 활성 구독자 ID 조회
         List<Long> activeSubscriberIds = jdbcTemplate.queryForList(
-            "SELECT id FROM subscribers WHERE status = 'active'",
+            "SELECT id FROM newsletter_subscribers WHERE status = 'active'",
             Long.class
         );
 
@@ -82,7 +82,7 @@ public class MessageService {
             "SELECT m.id, m.campaign_id, m.subscriber_id, c.subject, c.html, s.email " +
             "FROM messages m " +
             "JOIN campaigns c ON m.campaign_id = c.id " +
-            "JOIN subscribers s ON m.subscriber_id = s.id " +
+            "JOIN newsletter_subscribers s ON m.subscriber_id = s.id " +
             "WHERE m.status = 'queued' " +
             "LIMIT ?",
             (rs, rowNum) -> new QueuedMessage(

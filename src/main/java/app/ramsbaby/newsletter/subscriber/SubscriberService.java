@@ -20,24 +20,24 @@ public class SubscriberService {
 
     public void subscribe(String email) {
         // PostgreSQL: INSERT ... ON CONFLICT ... DO NOTHING
-        jdbcTemplate.update("INSERT INTO subscribers(email,status) VALUES(?, 'pending') ON CONFLICT (email) DO NOTHING", email);
+        jdbcTemplate.update("INSERT INTO newsletter_subscribers(email,status) VALUES(?, 'pending') ON CONFLICT (email) DO NOTHING", email);
         mailService.sendConfirm(email);
     }
 
     public void confirm(String token) {
         String email = new String(Base64.getUrlDecoder().decode(token), StandardCharsets.UTF_8);
-        jdbcTemplate.update("UPDATE subscribers SET status='active', confirmed_at=CURRENT_TIMESTAMP WHERE email=?", email);
+        jdbcTemplate.update("UPDATE newsletter_subscribers SET status='active', confirmed_at=CURRENT_TIMESTAMP WHERE email=?", email);
     }
 
     public void unsubscribe(String token) {
         String email = new String(Base64.getUrlDecoder().decode(token), StandardCharsets.UTF_8);
-        jdbcTemplate.update("UPDATE subscribers SET status='unsubscribed', unsubscribed_at=CURRENT_TIMESTAMP WHERE email=?", email);
+        jdbcTemplate.update("UPDATE newsletter_subscribers SET status='unsubscribed', unsubscribed_at=CURRENT_TIMESTAMP WHERE email=?", email);
         mailService.sendUnsubscribeNotice(email);
     }
 
     public List<SubscriberDto> listAll() {
         return jdbcTemplate.query(
-                "SELECT id, email, status, created_at, confirmed_at, unsubscribed_at FROM subscribers ORDER BY id DESC",
+                "SELECT id, email, status, created_at, confirmed_at, unsubscribed_at FROM newsletter_subscribers ORDER BY id DESC",
                 (rs, rowNum) -> new SubscriberDto(
                         rs.getLong("id"),
                         rs.getString("email"),
@@ -58,7 +58,7 @@ public class SubscriberService {
      * @return 삭제된 행 수 (1이면 성공, 0이면 없음)
      */
     public int deleteById(long id) {
-        return jdbcTemplate.update("DELETE FROM subscribers WHERE id = ?", id);
+        return jdbcTemplate.update("DELETE FROM newsletter_subscribers WHERE id = ?", id);
     }
 
     /**
@@ -68,6 +68,6 @@ public class SubscriberService {
      * @return 삭제된 행 수 (1이면 성공, 0이면 없음)
      */
     public int deleteByEmail(String email) {
-        return jdbcTemplate.update("DELETE FROM subscribers WHERE email = ?", email);
+        return jdbcTemplate.update("DELETE FROM newsletter_subscribers WHERE email = ?", email);
     }
 }

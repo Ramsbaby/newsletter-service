@@ -4,18 +4,25 @@
 -- ========================================
 
 -- 구독자 테이블
-CREATE TABLE IF NOT EXISTS subscribers (
-  id BIGSERIAL PRIMARY KEY,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  status VARCHAR(50) NOT NULL DEFAULT 'pending',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  confirmed_at TIMESTAMP NULL,
-  unsubscribed_at TIMESTAMP NULL
+CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  status VARCHAR(50) DEFAULT 'pending',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  confirmed_at TIMESTAMP WITH TIME ZONE NULL,
+  unsubscribed_at TIMESTAMP WITH TIME ZONE NULL,
+  subscription_source VARCHAR(100) NULL,
+  ip_address INET NULL,
+  user_agent TEXT NULL,
+  CONSTRAINT newsletter_subscribers_email_key UNIQUE (email),
+  CONSTRAINT email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
+  CONSTRAINT newsletter_subscribers_status_check CHECK (status IN ('pending', 'active', 'unsubscribed'))
 );
 
 -- 인덱스
-CREATE INDEX IF NOT EXISTS idx_subscribers_email ON subscribers(email);
-CREATE INDEX IF NOT EXISTS idx_subscribers_status ON subscribers(status);
+CREATE INDEX IF NOT EXISTS idx_newsletter_email ON newsletter_subscribers(email);
+CREATE INDEX IF NOT EXISTS idx_newsletter_status ON newsletter_subscribers(status);
+CREATE INDEX IF NOT EXISTS idx_newsletter_created ON newsletter_subscribers(created_at DESC);
 
 -- 캠페인 테이블
 CREATE TABLE IF NOT EXISTS campaigns (
@@ -43,7 +50,7 @@ CREATE TABLE IF NOT EXISTS messages (
   sent_at TIMESTAMP NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_messages_campaign FOREIGN KEY(campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE,
-  CONSTRAINT fk_messages_subscriber FOREIGN KEY(subscriber_id) REFERENCES subscribers(id) ON DELETE CASCADE
+  CONSTRAINT fk_messages_subscriber FOREIGN KEY(subscriber_id) REFERENCES newsletter_subscribers(id) ON DELETE CASCADE
 );
 
 -- 인덱스
